@@ -20,71 +20,70 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class TiledTileMap {
-	
-	
+
 	private ArrayList<BufferedImage> images = new ArrayList<BufferedImage>();
-	
+	private JSONObject jsonObject;
+	private JSONArray layers;
+	private ArrayList<BufferedImage> tileArray;
+	private JSONObject layer;
+	// private BufferedImage img = new
+	// BufferedImage(1024,1024,BufferedImage.TYPE_INT_ARGB);
+	// private BufferedImage img2 = new
+	// BufferedImage(1024,1024,BufferedImage.TYPE_INT_ARGB);
+
 	public static void main(String[] args) {
+
 		JFrame frame = new JFrame("SIM");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
 		JPanel panel = new TestPanel();
+
+		frame.getContentPane().add(panel);
+
 		frame.setContentPane(panel);
-		
+		frame.pack();
 		frame.setVisible(true);
-		frame.setSize(600, 800);
-		
-		new TiledTileMap();
 	}
-	
-	public TiledTileMap(){
-		
+
+	public TiledTileMap() {
+
 		JSONParser parser = new JSONParser();
-		
-		
-		
-		try{
+
+		try {
 			Object obj = parser.parse(new FileReader("images/disMap1.json"));
-			JSONObject jsonObject = (JSONObject)obj;
-			JSONArray layers = new JSONArray();
-			
-			
-			long height =  (long) jsonObject.get("height");
-			long width =  (long) jsonObject.get("width");
+			jsonObject = (JSONObject) obj;
+
+			layers = new JSONArray();
 			layers = (JSONArray) jsonObject.get("layers");
-			
-			JSONArray tilesets = (JSONArray)jsonObject.get("tilesets");
-			for(int i = 0; i < tilesets.size(); i++)
-			{
-				JSONObject tileset = (JSONObject)tilesets.get(i);
-				
+
+			for (int i = 0; i < layers.size(); i++) {
+				layer = (JSONObject) layers.get(i);
+			}
+			System.out.println(layers.size());
+
+			tileArray = new ArrayList<>();
+			JSONArray jsonTilesets = (JSONArray) jsonObject.get("tilesets");
+			for (int i = 0; i < jsonTilesets.size(); i++) {
+				JSONObject tileset = (JSONObject) jsonTilesets.get(i);
+
 				String imageFile = (String) tileset.get("image");
-				
-				images.add(ImageIO.read(new File(imageFile)));
-				
-				
+				BufferedImage img = ImageIO.read(new File(imageFile));
+				images.add(img);
+
+				int index = ((Long) tileset.get("firstgid")).intValue();
+
+				while (tileArray.size() < 2000)
+					tileArray.add(null);
+
+				for (int y = 0; y < img.getHeight(); y = y + 32) {
+					for (int x = 0; x < img.getWidth(); x = x + 32) {
+						BufferedImage tile = img.getSubimage(x, y, 32, 32);
+						tileArray.set(index, tile);
+						index++;
+					}
+				}
 			}
-			
-			System.out.println(images.size());
-			for(int i = 0; i < layers.size(); i++)
-			{
-				JSONObject layer = (JSONObject) layers.get(i);
-				
-				layer.get("data");
-				
-			}
-			
-			
-//			Component json = (Component) jsonObject.get("layers");
-			
-//			Iterator<JSONArray> iterator = layers.iterator();
-//			while (iterator.hasNext()) {
-//				System.out.println(iterator.next());
-//			}
-//			jsonObject.
-//			content.add(json);
-		
-			
-			System.out.println("hoogte: " + height + " breedte: " + width);
-			
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -92,51 +91,41 @@ public class TiledTileMap {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		
-		
-		}
+
+	}
+
+	public ArrayList<BufferedImage> getTileArray() {
+		return tileArray;
+	}
 }
-	class TestPanel extends JPanel
-	{
+
+class TestPanel extends JPanel {
 	/**
 		 * 
 		 */
-		private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = 1L;
+	private TiledTileMap tiled;
 	// member variables
 
 	// Constructor
-	public TestPanel()
-	{
-		
-	setPreferredSize( new Dimension(640,480) );
-	    
+	public TestPanel() {
+		tiled = new TiledTileMap();
+		setPreferredSize(new Dimension(1600, 2560));
+
 	}
 
 	// Super important, override paintComponents
-	public void paintComponent(Graphics g)
-	{
-	super.paintComponent(g);
-	Graphics2D g2 = (Graphics2D)g;
-	g2.translate(0,0);
-		
-//	BufferedImage bi = new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB);
-//	Graphics2D big = bi.createGraphics();
-//	Rectangle r = new Rectangle(0, 0, 0, 5);
-//	TexturePaint tp = new TexturePaint(bi, r);
-//	
-//	g2.setPaint(tp);
-//	g2.drawOval(10, 10, 100, 200);
-	
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		Graphics2D g2 = (Graphics2D) g;
+		g2.translate(0, 0);
+		int a = 0;
 
-	    }
+		for (int x = 0; x < 1280; x = x + 32) {
+			for (int y = 0; y < 1280; y = y + 32) {
+				g2.drawImage(tiled.getTileArray().get(a), y, x, 32, 32, null);
+				a++;
+			}
+		}
 	}
-
-
-	
-	
-	
-	
-
-
-
+}
