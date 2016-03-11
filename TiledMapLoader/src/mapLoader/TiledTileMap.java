@@ -26,10 +26,6 @@ public class TiledTileMap {
 	private JSONArray layers;
 	private ArrayList<BufferedImage> tileArray;
 	private JSONObject layer;
-	// private BufferedImage img = new
-	// BufferedImage(1024,1024,BufferedImage.TYPE_INT_ARGB);
-	// private BufferedImage img2 = new
-	// BufferedImage(1024,1024,BufferedImage.TYPE_INT_ARGB);
 
 	public static void main(String[] args) {
 
@@ -59,7 +55,7 @@ public class TiledTileMap {
 			for (int i = 0; i < layers.size(); i++) {
 				layer = (JSONObject) layers.get(i);
 			}
-			System.out.println(layers.size());
+			// System.out.println(layers.size());
 
 			tileArray = new ArrayList<>();
 			JSONArray jsonTilesets = (JSONArray) jsonObject.get("tilesets");
@@ -97,6 +93,10 @@ public class TiledTileMap {
 	public ArrayList<BufferedImage> getTileArray() {
 		return tileArray;
 	}
+
+	public JSONArray getLayer() {
+		return layers;
+	}
 }
 
 class TestPanel extends JPanel {
@@ -105,13 +105,14 @@ class TestPanel extends JPanel {
 		 */
 	private static final long serialVersionUID = 1L;
 	private TiledTileMap tiled;
+	private TiledLayer layer;
 	// member variables
 
 	// Constructor
 	public TestPanel() {
 		tiled = new TiledTileMap();
+		layer = new TiledLayer((JSONObject) tiled.getLayer().get(4));
 		setPreferredSize(new Dimension(1600, 2560));
-
 	}
 
 	// Super important, override paintComponents
@@ -120,11 +121,20 @@ class TestPanel extends JPanel {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.translate(0, 0);
 		int a = 0;
+		for (int i = 0; i < (tiled.getLayer().size() - 1); i++) {
+			layer = new TiledLayer((JSONObject) tiled.getLayer().get(i));
+			for (int x = 0; x <= (layer.getHeight() * 32 - 32); x = x + 32) {
+				for (int y = 0; y <= (layer.getWidth() * 32 - 32); y = y + 32) {
+					Long b = layer.getData().get(a);
+					int c = b.intValue();
+					g2.drawImage(tiled.getTileArray().get(c), y, x, 32, 32, null);
+					if (a >= 3999) {
+						a = 0;
+					} else {
+						a++;
+					}
 
-		for (int x = 0; x < 1280; x = x + 32) {
-			for (int y = 0; y < 1280; y = y + 32) {
-				g2.drawImage(tiled.getTileArray().get(a), y, x, 32, 32, null);
-				a++;
+				}
 			}
 		}
 	}

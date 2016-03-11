@@ -20,8 +20,10 @@ public class TiledLayer {
 	private int y;
 	private String name;
 	private String type;
+	private TiledTileMap tiled;
 
 	public TiledLayer(JSONObject layer) {
+		tiled = new TiledTileMap();
 		try {
 			tiledLayerData(layer);
 		} catch (FileNotFoundException e) {
@@ -35,10 +37,8 @@ public class TiledLayer {
 	}
 
 	public void tiledLayerData(JSONObject layer) throws FileNotFoundException, IOException, ParseException {
-
 		this.layer = layer;
 		dataJSONArray = (JSONArray) layer.get("data");
-
 		width = ((Long) layer.get("width")).intValue();
 		height = ((Long) layer.get("height")).intValue();
 		name = (String) layer.get("name");
@@ -47,7 +47,9 @@ public class TiledLayer {
 		visible = (boolean) layer.get("visible");
 		x = (((Long) layer.get("x")).intValue());
 		y = ((Long) layer.get("y")).intValue();
-		dataArray = (ArrayList<Long>) dataJSONArray;
+		dataArray = ((ArrayList<Long>) dataJSONArray);
+		System.out.println(width + " " + height + " " + name + " " + type + " " + opacity + " " + visible + " " + x
+				+ " " + y + " " + dataArray + " ");
 	}
 
 	public ArrayList<Long> getData() {
