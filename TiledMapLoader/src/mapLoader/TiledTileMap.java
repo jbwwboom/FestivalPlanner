@@ -55,6 +55,7 @@ public class TiledTileMap {
 			for (int i = 0; i < layers.size(); i++) {
 				layer = (JSONObject) layers.get(i);
 			}
+
 			// System.out.println(layers.size());
 
 			tileArray = new ArrayList<>();
