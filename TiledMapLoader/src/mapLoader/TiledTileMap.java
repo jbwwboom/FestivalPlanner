@@ -101,22 +101,17 @@ public class TiledTileMap {
 }
 
 class TestPanel extends JPanel {
-	/**
-		 * 
-		 */
+
 	private static final long serialVersionUID = 1L;
 	private TiledTileMap tiled;
 	private TiledLayer layer;
-	// member variables
 
-	// Constructor
 	public TestPanel() {
 		tiled = new TiledTileMap();
 		// layer = new TiledLayer((JSONObject) tiled.getLayer().get(4));
 		setPreferredSize(new Dimension(1600, 2560));
 	}
 
-	// Super important, override paintComponents
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
