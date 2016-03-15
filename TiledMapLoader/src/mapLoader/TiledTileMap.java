@@ -112,7 +112,7 @@ class TestPanel extends JPanel {
 	// Constructor
 	public TestPanel() {
 		tiled = new TiledTileMap();
-		layer = new TiledLayer((JSONObject) tiled.getLayer().get(4));
+		// layer = new TiledLayer((JSONObject) tiled.getLayer().get(4));
 		setPreferredSize(new Dimension(1600, 2560));
 	}
 
