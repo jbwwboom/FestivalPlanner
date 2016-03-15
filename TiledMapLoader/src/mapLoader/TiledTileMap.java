@@ -46,7 +46,7 @@ public class TiledTileMap {
 		JSONParser parser = new JSONParser();
 
 		try {
-			Object obj = parser.parse(new FileReader("images/disMap1.json"));
+			Object obj = parser.parse(new FileReader("images/podiums.json"));
 			jsonObject = (JSONObject) obj;
 
 			layers = new JSONArray();
