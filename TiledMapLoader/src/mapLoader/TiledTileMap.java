@@ -41,12 +41,13 @@ public class TiledTileMap {
 		frame.setVisible(true);
 	}
 
+	@SuppressWarnings("unchecked")
 	public TiledTileMap() {
 
 		JSONParser parser = new JSONParser();
 
 		try {
-			Object obj = parser.parse(new FileReader("images/podiums.json"));
+			Object obj = parser.parse(new FileReader("src/mapLoader/podiums.json"));
 			jsonObject = (JSONObject) obj;
 
 			layers = new JSONArray();
@@ -69,12 +70,14 @@ public class TiledTileMap {
 
 				int index = ((Long) tileset.get("firstgid")).intValue();
 
-				while (tileArray.size() < 2000)
+				while (tileArray.size() < 22000)
 					tileArray.add(null);
 
-				for (int y = 0; y < img.getHeight(); y = y + 32) {
-					for (int x = 0; x < img.getWidth(); x = x + 32) {
-						BufferedImage tile = img.getSubimage(x, y, 32, 32);
+				System.out.println(img.getHeight() + " " + img.getWidth());
+
+				for (int y = 0; y < img.getHeight(); y = y + 16) {
+					for (int x = 0; x < img.getWidth(); x = x + 16) {
+						BufferedImage tile = img.getSubimage(x, y, 16, 16);
 						tileArray.set(index, tile);
 						index++;
 					}
@@ -108,28 +111,26 @@ class TestPanel extends JPanel {
 
 	public TestPanel() {
 		tiled = new TiledTileMap();
-		// layer = new TiledLayer((JSONObject) tiled.getLayer().get(4));
-		setPreferredSize(new Dimension(1600, 1600));
+		setPreferredSize(new Dimension((60 * 16), (60 * 16)));
 	}
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
-		g2.translate(0, 0);
+		g2.translate(-100, -150);
 		int a = 0;
 		for (int i = 0; i < (tiled.getLayer().size() - 1); i++) {
 			layer = new TiledLayer((JSONObject) tiled.getLayer().get(i));
-			for (int x = 0; x <= (layer.getHeight() * 32 - 32); x = x + 32) {
-				for (int y = 0; y <= (layer.getWidth() * 32 - 32); y = y + 32) {
+			for (int x = 0; x <= (layer.getHeight() * 16 - 16); x = x + 16) {
+				for (int y = 0; y <= (layer.getWidth() * 16 - 16); y = y + 16) {
 					Long b = layer.getData().get(a);
 					int c = b.intValue();
-					g2.drawImage(tiled.getTileArray().get(c), y, x, 32, 32, null);
-					if (a >= 3999) {
+					g2.drawImage(tiled.getTileArray().get(c), y, x, 16, 16, null);
+					if (a >= (60 * 60 - 1)) {
 						a = 0;
 					} else {
 						a++;
 					}
-
 				}
 			}
 		}
