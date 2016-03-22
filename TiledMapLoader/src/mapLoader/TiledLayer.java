@@ -48,8 +48,9 @@ public class TiledLayer {
 		x = (((Long) layer.get("x")).intValue());
 		y = ((Long) layer.get("y")).intValue();
 		dataArray = ((ArrayList<Long>) dataJSONArray);
-		System.out.println(width + " " + height + " " + name + " " + type + " " + opacity + " " + visible + " " + x
-				+ " " + y + " " + dataArray + " ");
+		// System.out.println(width + " " + height + " " + name + " " + type + "
+		// " + opacity + " " + visible + " " + x
+		// + " " + y + " " + dataArray + " ");
 	}
 
 	public ArrayList<Long> getData() {

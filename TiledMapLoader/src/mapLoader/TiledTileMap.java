@@ -101,7 +101,6 @@ public class TiledTileMap {
 	public JSONArray getLayer() {
 		return layers;
 	}
-
 }
 
 class TestPanel extends JPanel {
@@ -109,9 +108,13 @@ class TestPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private TiledTileMap tiled;
 	private TiledLayer layer;
+	private Pathfinding path;
 
 	public TestPanel() {
 		tiled = new TiledTileMap();
+		// path = new Pathfinding();
+		// path.route(new TiledLayer((JSONObject)
+		// tiled.getLayer().get(tiled.getLayer().size() - 1)));
 		setPreferredSize(new Dimension((60 * 16), (60 * 16)));
 	}
 
