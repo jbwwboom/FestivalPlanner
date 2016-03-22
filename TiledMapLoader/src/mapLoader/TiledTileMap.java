@@ -73,7 +73,7 @@ public class TiledTileMap {
 				while (tileArray.size() < 22000)
 					tileArray.add(null);
 
-				System.out.println(img.getHeight() + " " + img.getWidth());
+				// System.out.println(img.getHeight() + " " + img.getWidth());
 
 				for (int y = 0; y < img.getHeight(); y = y + 16) {
 					for (int x = 0; x < img.getWidth(); x = x + 16) {
@@ -101,6 +101,7 @@ public class TiledTileMap {
 	public JSONArray getLayer() {
 		return layers;
 	}
+
 }
 
 class TestPanel extends JPanel {

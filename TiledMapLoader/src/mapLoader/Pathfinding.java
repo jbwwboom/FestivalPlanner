@@ -14,9 +14,9 @@ public class Pathfinding {
 	}
 
 	public void route() {
-		distance = new int[50][50];
-		for (int x = 0; x < 50; x++) {
-			for (int y = 0; y < 50; y++) {
+		distance = new int[16][16];
+		for (int x = 0; x < 16; x++) {
+			for (int y = 0; y < 16; y++) {
 				distance[x][y] = 100000;
 			}
 		}
@@ -30,6 +30,11 @@ public class Pathfinding {
 		Point neighbours[] = { new Point(1, 0), new Point(-1, 0), new Point(0, -1), new Point(0, 1) };
 
 		while (!toDo.isEmpty()) {
+			Point current = toDo.remove();
+
+			for (int i = 0; i < neighbours.length; i++) {
+
+			}
 
 		}
 
