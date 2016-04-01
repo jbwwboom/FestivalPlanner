@@ -3,6 +3,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -22,6 +24,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -38,6 +41,20 @@ public class TiledTileMap {
 
 	private ArrayList<Point> spawnPoints = new ArrayList<Point>();
 	private ArrayList<Visitor> visitors = new ArrayList<Visitor>();
+	Pathfinding pathFinding;
+
+	public static void main(String args[]) {
+		JFrame frame = new JFrame("SIM");
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+		JPanel panel = new TestPanel();
+
+		frame.getContentPane().add(panel);
+
+		frame.setContentPane(panel);
+		frame.pack();
+		frame.setVisible(true);
+	}
 
 	@SuppressWarnings("unchecked")
 
@@ -65,7 +82,7 @@ public class TiledTileMap {
 
 				String imageFile = (String) tileset.get("image");
 				BufferedImage img = ImageIO.read(new File(imageFile));
-				images.add(img);
+				/// images.add(img);
 
 				int index = ((Long) tileset.get("firstgid")).intValue();
 
@@ -87,32 +104,32 @@ public class TiledTileMap {
 			spawnPoints.add(new Point(54, 13));
 			spawnPoints.add(new Point(54, 48));
 
+			pathFinding = new Pathfinding(this);
+
+			// nieuwe bezoekers aanmaken
 			for (int i = 0; i < 50; i++) {
-				int spawn = (int) Math.random() * 2;
+				int spawn = (int) Math.floor(Math.random() * 3);
 				double direction = 0;
 				Point2D spawnPoint = null;
 				switch (spawn) {
 				case 0:
 					spawnPoint = spawnPoints.get(spawn);
 					spawnPoint = new Point((int) spawnPoint.getX() * 16, (int) spawnPoint.getY() * 16);
-					direction = Math.PI * 0.25;
 					break;
 				case 1:
 					spawnPoint = spawnPoints.get(spawn);
 					spawnPoint = new Point((int) spawnPoint.getX() * 16, (int) spawnPoint.getY() * 16);
-					direction = Math.PI * 1.75;
 					break;
 
 				case 2:
 					spawnPoint = spawnPoints.get(spawn);
 					spawnPoint = new Point((int) spawnPoint.getX() * 16, (int) spawnPoint.getY() * 16);
-					direction = Math.PI * 0.75;
 					break;
 				}
 
-				Point2D location = new Point2D.Double(16 * spawnPoint.getX(), 16 * spawnPoint.getY());
-
-				// visitors.add(new Visitor(location, ,direction));
+				Point2D location = new Point2D.Double(spawnPoint.getX(), spawnPoint.getY());
+				Visitor v = new Visitor(location, this);
+				visitors.add(v);
 			}
 
 		} catch (FileNotFoundException e) {
@@ -145,24 +162,29 @@ public class TiledTileMap {
 	public JSONArray getLayer() {
 		return layers;
 	}
+
+	public ArrayList<Visitor> getVisitors() {
+		return visitors;
+	}
+
 }
 
-class TestPanel extends JPanel {
+class TestPanel extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	private TiledTileMap tiled;
 	private TiledLayer layer;
-	private Pathfinding path;
 
 	private Point mouseP;
 	private int newCX;
 	private int newCY;
 	private float cameraZoom = 1;
+	Timer timer;
 
 	public TestPanel() {
+		timer = new Timer((1000 / 60), this);
+		timer.start();
 		tiled = new TiledTileMap();
-		path = new Pathfinding();
-		path.route(new TiledLayer((JSONObject) tiled.getLayer().get(tiled.getLayer().size() - 1)));
 		setPreferredSize(new Dimension((60 * 16), (60 * 16)));
 		camera();
 	}
@@ -192,6 +214,15 @@ class TestPanel extends JPanel {
 
 			}
 		}
+
+		for (Visitor v : tiled.getVisitors()) {
+			v.draw(g2);
+		}
+
+		for (Visitor v : tiled.getVisitors()) {
+			v.update(tiled.getVisitors());
+		}
+
 	}
 
 	public void camera() {
@@ -243,4 +274,11 @@ class TestPanel extends JPanel {
 		camera.scale(cameraZoom, cameraZoom);
 		return camera;
 	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		repaint();
+
+	}
+
 }

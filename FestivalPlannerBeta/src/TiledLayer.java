@@ -19,10 +19,8 @@ public class TiledLayer {
 	private int y;
 	private String name;
 	private String type;
-	private TiledTileMap tiled;
 
 	public TiledLayer(JSONObject layer) {
-		tiled = new TiledTileMap();
 		try {
 			tiledLayerData(layer);
 		} catch (FileNotFoundException e) {

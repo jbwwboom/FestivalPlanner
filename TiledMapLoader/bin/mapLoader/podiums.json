@@ -45,7 +45,7 @@
         {
          "columns":100,
          "firstgid":1,
-         "image":"images/tileset.png",
+         "image":"..\/..\/..\/FestivalPlannerBeta\/images\/tileset.png",
          "imageheight":3200,
          "imagewidth":1600,
          "margin":0,
@@ -351,7 +351,7 @@
         {
          "columns":1,
          "firstgid":20001,
-         "image":"images/collision.png",
+         "image":"..\/..\/..\/FestivalPlannerBeta\/images\/collision.png",
          "imageheight":16,
          "imagewidth":16,
          "margin":0,

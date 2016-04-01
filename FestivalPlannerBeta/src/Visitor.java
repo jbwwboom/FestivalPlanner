@@ -13,19 +13,19 @@ public class Visitor {
 	private Pathfinding path;
 	private double speed;
 	private Image sprite;
-	private double direction;
+	private Point2D direction;
 	private Point2D startPosition;
 	public double angleSpeed;
 
 	private Point2D destination;
 
-	public Visitor(Point2D location, Pathfinding path, double direction) {
+	public Visitor(Point2D location, TiledTileMap tiled) {
+		path = tiled.pathFinding;
 		this.location = location;
-		this.direction = direction;
-		this.path = path;
+		direction = path.getDirection((int) location.getX(), (int) location.getY());
 		startPosition = location;
 		speed = 1 + Math.random() * 2;
-		destination = new Point2D.Double(400, 300);
+		destination = path.getDestination();
 
 		int random = (int) (Math.random() * 6);
 		switch (random) {
@@ -54,7 +54,7 @@ public class Visitor {
 	public void draw(Graphics2D g2d) {
 		AffineTransform transform = new AffineTransform();
 		transform.translate(location.getX() - sprite.getWidth(null) / 2, location.getY() - sprite.getHeight(null) / 2);
-		transform.rotate(direction, sprite.getWidth(null) / 2, sprite.getHeight(null) / 2);
+		transform.rotate(sprite.getWidth(null) / 2, sprite.getHeight(null) / 2);
 		g2d.drawImage(sprite, transform, null);
 
 	}
@@ -62,39 +62,33 @@ public class Visitor {
 	public void update(ArrayList<Visitor> visitors) {
 		// direction += 0.01;
 
-		if (!atTarget()) {
-			int x = (int) Math.floor(location.getX() / 16);
-			int y = (int) Math.floor(location.getY() / 16);
+		// if (!atTarget())
+		int x = (int) Math.floor(location.getX() / 16);
+		int y = (int) Math.floor(location.getY() / 16);
 
-			Point direction = path.getDirection(x, y);
+		direction = path.getDirection(x, y);
 
-			Point2D target = new Point2D.Double(16 * (x + direction.x) + 8, 16 * (y + direction.y) + 8);
+		Point2D target = new Point2D.Double(16 * (x + direction.getX()) + 8, 16 * (y + direction.getY()) + 8);
 
-			Point2D difference = new Point2D.Double(target.getX() - location.getX(), target.getY() - location.getY());
+		Point2D difference = new Point2D.Double(target.getX() - location.getX(), target.getY() - location.getY());
 
-			difference = new Point2D.Double(difference.getX() / difference.distance(0, 0) * speed,
-					difference.getY() / difference.distance(0, 0) * speed);
+		difference = new Point2D.Double(difference.getX() / difference.distance(0, 0) * speed,
+				difference.getY() / difference.distance(0, 0) * speed);
 
-			angleSpeed = Math.atan2(difference.getX(), difference.getY());
+		angleSpeed = Math.atan2(difference.getX(), difference.getY());
 
-			location = new Point2D.Double(location.getX() + difference.getX(), location.getY() + difference.getY());
-		}
+		location = new Point2D.Double(location.getX() + difference.getX(), location.getY() + difference.getY());
 
 		boolean isCollision = false;
 		for (Visitor v : visitors) {
 			if (v == this)
 				continue;
-			if (v.location.distance(location) < 6) {
+			if (v.location.distance(location) < 7) {
 				isCollision = true;
 				break;
 			}
 		}
 
-		// if (!isCollision) {
-		//
-		// } else {
-		//
-		// }
 	}
 
 	public void setDestination(Point point) {
@@ -107,6 +101,10 @@ public class Visitor {
 
 	public double getPointY() {
 		return location.getY();
+	}
+
+	public Image getSprite() {
+		return sprite;
 	}
 
 	public Point2D getLocation() {

@@ -12,6 +12,7 @@ public class Pathfinding {
 	int[][] distance;
 	TiledLayer layer;
 	TiledTileMap tiled;
+	ArrayList<Point> podiums = new ArrayList<Point>();
 
 	public static void main(String args[]) {
 		new Pathfinding();
@@ -19,6 +20,9 @@ public class Pathfinding {
 
 	public Pathfinding() {
 		tiled = new TiledTileMap();
+		podiums.add(new Point(16, 18));
+		podiums.add(new Point(43, 24));
+		podiums.add(new Point(15, 48));
 		layer = new TiledLayer((JSONObject) tiled.getLayer().get(tiled.getLayer().size() - 1));
 		route(layer);
 	}
@@ -31,9 +35,24 @@ public class Pathfinding {
 			}
 		}
 
+		int podium = (int) Math.random() * 2;
+		Point podiumPoint = null;
+
+		switch (podium) {
+		case 0:
+			podiumPoint = podiums.get(podium);
+			break;
+		case 1:
+			podiumPoint = podiums.get(podium);
+			break;
+		case 2:
+			podiumPoint = podiums.get(podium);
+			break;
+		}
+
 		Queue<Point> toDo = new LinkedList<>();
 		ArrayList<Point> visited = new ArrayList<>();
-		distance[16][18] = 0;
+		distance[(int) podiumPoint.getX()][(int) podiumPoint.getY()] = 0;
 		Point position = new Point(16, 18);
 		toDo.add(position);
 		visited.add(position);
@@ -41,7 +60,6 @@ public class Pathfinding {
 		Point neighbours[] = { new Point(1, 0), new Point(-1, 0), new Point(0, -1), new Point(0, 1) };
 
 		while (!toDo.isEmpty()) {
-			// Point current = new Point(16, 18);
 			Point current = toDo.remove();
 			for (int i = 0; i < neighbours.length; i++) {
 				Point point = new Point((int) (current.getX() + neighbours[i].getX()),

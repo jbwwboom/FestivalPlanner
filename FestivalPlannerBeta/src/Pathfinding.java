@@ -4,18 +4,24 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.json.simple.JSONObject;
+
 public class Pathfinding {
 	Point position;
 	int[][] distance;
 	TiledLayer layer;
 	TiledTileMap tiled;
+	ArrayList<Point> podiums = new ArrayList<Point>();
+	int podium;
 
-	public static void main(String args[]) {
-		new Pathfinding();
-	}
+	public Pathfinding(TiledTileMap tiled) {
 
-	public Pathfinding() {
-		tiled = new TiledTileMap();
+		podium = (int) Math.floor(Math.random() * 3);
+		podiums.add(new Point(16, 18));
+		podiums.add(new Point(43, 24));
+		podiums.add(new Point(15, 48));
+		layer = new TiledLayer((JSONObject) tiled.getLayer().get(tiled.getLayer().size() - 1));
+		route(layer);
 	}
 
 	public void route(TiledLayer layer) {
@@ -25,23 +31,36 @@ public class Pathfinding {
 				distance[x][y] = 60 * 60 * 60;
 			}
 		}
+		Point podiumPoint = null;
+
+		System.out.println(podium);
+		switch (podium) {
+		case 0:
+			podiumPoint = podiums.get(podium);
+			break;
+		case 1:
+			podiumPoint = podiums.get(podium);
+			break;
+		case 2:
+			podiumPoint = podiums.get(podium);
+			break;
+		}
 
 		Queue<Point> toDo = new LinkedList<>();
 		ArrayList<Point> visited = new ArrayList<>();
-		distance[position.x][position.y] = 0;
-		Point position = new Point(16, 18);
+
+		distance[(int) podiumPoint.getX()][(int) podiumPoint.getY()] = 0;
+		Point position = podiumPoint;
 		toDo.add(position);
 		visited.add(position);
 
 		Point neighbours[] = { new Point(1, 0), new Point(-1, 0), new Point(0, -1), new Point(0, 1) };
 
 		while (!toDo.isEmpty()) {
-			// Point current = new Point(16, 18);
 			Point current = toDo.remove();
 			for (int i = 0; i < neighbours.length; i++) {
 				Point point = new Point((int) (current.getX() + neighbours[i].getX()),
 						(int) (current.getY() + neighbours[i].getY()));
-				System.out.println(point);
 				if (point.x < 0 || point.y < 0 || point.x >= layer.getWidth() || point.y >= layer.getHeight()) {
 					continue;
 				}
@@ -63,11 +82,18 @@ public class Pathfinding {
 		Point direction = new Point(0, 0);
 		for (Point p : neighbours) {
 			Point newPoint = new Point(x + p.x, y + p.y);
+			if (newPoint.x < 0 || newPoint.y < 0 || newPoint.x >= this.layer.getWidth()
+					|| newPoint.y >= this.layer.getHeight())
+				continue;
 			if (distance[newPoint.x][newPoint.y] < distance[x][y]) {
 				direction = p;
 			}
 		}
 		return direction;
+	}
+
+	public Point getDestination() {
+		return podiums.get(podium);
 	}
 }
 // 16,18
