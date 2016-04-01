@@ -43,18 +43,18 @@ public class TiledTileMap {
 	private ArrayList<Visitor> visitors = new ArrayList<Visitor>();
 	Pathfinding pathFinding;
 
-	public static void main(String args[]) {
-		JFrame frame = new JFrame("SIM");
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-		JPanel panel = new TestPanel();
-
-		frame.getContentPane().add(panel);
-
-		frame.setContentPane(panel);
-		frame.pack();
-		frame.setVisible(true);
-	}
+	// public static void main(String args[]) {
+	// JFrame frame = new JFrame("SIM");
+	// frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	//
+	// JPanel panel = new TestPanel();
+	//
+	// frame.getContentPane().add(panel);
+	//
+	// frame.setContentPane(panel);
+	// frame.pack();
+	// frame.setVisible(true);
+	// }
 
 	@SuppressWarnings("unchecked")
 
@@ -107,7 +107,7 @@ public class TiledTileMap {
 			pathFinding = new Pathfinding(this);
 
 			// nieuwe bezoekers aanmaken
-			for (int i = 0; i < 50; i++) {
+			for (int i = 0; i < 500; i++) {
 				int spawn = (int) Math.floor(Math.random() * 3);
 				double direction = 0;
 				Point2D spawnPoint = null;

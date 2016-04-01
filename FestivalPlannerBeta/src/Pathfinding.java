@@ -11,6 +11,7 @@ public class Pathfinding {
 	int[][] distance;
 	TiledLayer layer;
 	TiledTileMap tiled;
+	int[][] collisionArray;
 	ArrayList<Point> podiums = new ArrayList<Point>();
 	int podium;
 
@@ -22,6 +23,7 @@ public class Pathfinding {
 		podiums.add(new Point(15, 48));
 		layer = new TiledLayer((JSONObject) tiled.getLayer().get(tiled.getLayer().size() - 1));
 		route(layer);
+
 	}
 
 	public void route(TiledLayer layer) {
@@ -67,6 +69,9 @@ public class Pathfinding {
 				if (visited.contains(point)) {
 					continue;
 				}
+				if (layer.getData().get(point.y * layer.getWidth() + point.x) == 20001) {
+					continue;
+				}
 
 				distance[point.x][point.y] = distance[current.x][current.y] + 1;
 				visited.add(point);
@@ -95,6 +100,7 @@ public class Pathfinding {
 	public Point getDestination() {
 		return podiums.get(podium);
 	}
+
 }
 // 16,18
 // 43,24

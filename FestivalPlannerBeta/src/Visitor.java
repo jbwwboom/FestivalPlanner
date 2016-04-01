@@ -89,6 +89,12 @@ public class Visitor {
 			}
 		}
 
+		// if (!isCollision)
+
+		// else {
+
+		// }
+
 	}
 
 	public void setDestination(Point point) {
