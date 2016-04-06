@@ -1,6 +1,5 @@
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -16,16 +15,14 @@ public class Visitor {
 	private Point2D direction;
 	private Point2D startPosition;
 	public double angleSpeed;
+	TiledLayer layer;
 
-	private Point2D destination;
-
-	public Visitor(Point2D location, TiledTileMap tiled) {
+	public Visitor(Point2D location, Simulator tiled) {
 		path = tiled.pathFinding;
 		this.location = location;
 		direction = path.getDirection((int) location.getX(), (int) location.getY());
 		startPosition = location;
 		speed = 1 + Math.random() * 2;
-		destination = path.getDestination();
 
 		int random = (int) (Math.random() * 6);
 		switch (random) {
@@ -95,10 +92,6 @@ public class Visitor {
 
 		// }
 
-	}
-
-	public void setDestination(Point point) {
-		this.destination = point;
 	}
 
 	public double getPointX() {

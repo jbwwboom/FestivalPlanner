@@ -35,7 +35,7 @@ public class GUI extends JFrame {
 	Agenda agenda;
 	File festivalFile = null;
 	DefaultTableModel model;
-	TiledTileMap tiled = new TiledTileMap();
+	Simulator tiled = new Simulator(10);
 
 	public GUI() {
 
@@ -163,7 +163,20 @@ public class GUI extends JFrame {
 
 		simulation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				tiled.makeGUI();
+				String visitorString = JOptionPane.showInputDialog(GUI.this, "How many visitors?");
+				try {
+					int visitorAmount = Integer.parseInt(visitorString);
+					if (visitorAmount > 1000) {
+						visitorAmount = 1000;
+					} else if (0 > visitorAmount) {
+						visitorAmount = 1;
+					}
+					tiled.makeGUI(visitorAmount);
+				} catch (NumberFormatException exception) {
+					JOptionPane.showMessageDialog(GUI.this, "Vul een getal in");
+					actionPerformed(e);
+				}
+
 			}
 		});
 
@@ -552,4 +565,5 @@ public class GUI extends JFrame {
 			agenda.getActivity().remove(i);
 		}
 	}
+
 }

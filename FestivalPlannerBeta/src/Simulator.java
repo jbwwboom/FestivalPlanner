@@ -31,34 +31,22 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-public class TiledTileMap {
+public class Simulator {
 
 	private ArrayList<BufferedImage> images = new ArrayList<BufferedImage>();
 	private JSONObject jsonObject;
 	private JSONArray layers;
 	private ArrayList<BufferedImage> tileArray;
 	private JSONObject layer;
+	private int visitorAmount;
 
 	private ArrayList<Point> spawnPoints = new ArrayList<Point>();
 	private ArrayList<Visitor> visitors = new ArrayList<Visitor>();
 	Pathfinding pathFinding;
 
-	// public static void main(String args[]) {
-	// JFrame frame = new JFrame("SIM");
-	// frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-	//
-	// JPanel panel = new TestPanel();
-	//
-	// frame.getContentPane().add(panel);
-	//
-	// frame.setContentPane(panel);
-	// frame.pack();
-	// frame.setVisible(true);
-	// }
-
 	@SuppressWarnings("unchecked")
 
-	public TiledTileMap() {
+	public Simulator(int visitorAmount) {
 
 		JSONParser parser = new JSONParser();
 
@@ -107,9 +95,8 @@ public class TiledTileMap {
 			pathFinding = new Pathfinding(this);
 
 			// nieuwe bezoekers aanmaken
-			for (int i = 0; i < 500; i++) {
+			for (int i = 0; i < visitorAmount; i++) {
 				int spawn = (int) Math.floor(Math.random() * 3);
-				double direction = 0;
 				Point2D spawnPoint = null;
 				switch (spawn) {
 				case 0:
@@ -142,11 +129,11 @@ public class TiledTileMap {
 
 	}
 
-	public void makeGUI() {
+	public void makeGUI(int visitorAmount) {
 		JFrame frame = new JFrame("SIM");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-		JPanel panel = new TestPanel();
+		this.visitorAmount = visitorAmount;
+		JPanel panel = new TestPanel(visitorAmount);
 
 		frame.getContentPane().add(panel);
 
@@ -172,19 +159,22 @@ public class TiledTileMap {
 class TestPanel extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	private TiledTileMap tiled;
+	private Simulator tiled;
 	private TiledLayer layer;
 
 	private Point mouseP;
 	private int newCX;
+	private int visitorAmount;
 	private int newCY;
 	private float cameraZoom = 1;
 	Timer timer;
+	GUI gui;
 
-	public TestPanel() {
+	public TestPanel(int visitorAmount) {
 		timer = new Timer((1000 / 60), this);
 		timer.start();
-		tiled = new TiledTileMap();
+		this.visitorAmount = visitorAmount;
+		tiled = new Simulator(visitorAmount);
 		setPreferredSize(new Dimension((60 * 16), (60 * 16)));
 		camera();
 	}
@@ -266,6 +256,7 @@ class TestPanel extends JPanel implements ActionListener {
 				repaint();
 			}
 		});
+
 	}
 
 	public AffineTransform getCamera() {
