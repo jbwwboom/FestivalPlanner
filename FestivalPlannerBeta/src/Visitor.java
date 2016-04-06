@@ -17,8 +17,8 @@ public class Visitor {
 	public double angleSpeed;
 	TiledLayer layer;
 
-	public Visitor(Point2D location, Simulator tiled) {
-		path = tiled.pathFinding;
+	public Visitor(Point2D location, Simulator tiled, Pathfinding path) {
+		this.path = path;
 		this.location = location;
 		direction = path.getDirection((int) location.getX(), (int) location.getY());
 		startPosition = location;
@@ -57,9 +57,6 @@ public class Visitor {
 	}
 
 	public void update(ArrayList<Visitor> visitors) {
-		// direction += 0.01;
-
-		// if (!atTarget())
 		int x = (int) Math.floor(location.getX() / 16);
 		int y = (int) Math.floor(location.getY() / 16);
 
@@ -87,10 +84,10 @@ public class Visitor {
 		}
 
 		// if (!isCollision)
-
-		// else {
-
-		// }
+		// location = newLocation;
+		// else
+		// direction = new Point2D.Double(direction.getX() + 1, direction.getY()
+		// + 1);
 
 	}
 
@@ -118,6 +115,14 @@ public class Visitor {
 		int x = (int) Math.floor(location.getX() / 16);
 		int y = (int) Math.floor(location.getY() / 16);
 		return path.distance[x][y] <= 1;
+	}
+
+	public void setPath(Pathfinding newPath) {
+		path = newPath;
+	}
+
+	public Pathfinding getPath() {
+		return path;
 	}
 
 }

@@ -12,16 +12,12 @@ public class Pathfinding {
 	TiledLayer layer;
 	Simulator tiled;
 	int[][] collisionArray;
-	ArrayList<Point> podiums = new ArrayList<Point>();
+	Point targetPosition;
 
-	public Pathfinding(Simulator tiled) {
-
-		podiums.add(new Point(16, 18));
-		podiums.add(new Point(43, 24));
-		podiums.add(new Point(15, 48));
+	public Pathfinding(Simulator tiled, Point targetPosition) {
+		this.targetPosition = targetPosition;
 		layer = new TiledLayer((JSONObject) tiled.getLayer().get(tiled.getLayer().size() - 1));
 		route(layer);
-
 	}
 
 	public void route(TiledLayer layer) {
@@ -35,24 +31,8 @@ public class Pathfinding {
 		Queue<Point> toDo = new LinkedList<>();
 		ArrayList<Point> visited = new ArrayList<>();
 
-		Point podiumPoint = null;
-
-		int podium = (int) Math.floor(Math.random() * 3);
-
-		switch (podium) {
-		case 0:
-			podiumPoint = podiums.get(podium);
-			break;
-		case 1:
-			podiumPoint = podiums.get(podium);
-			break;
-		case 2:
-			podiumPoint = podiums.get(podium);
-			break;
-		}
-
-		distance[(int) podiumPoint.getX()][(int) podiumPoint.getY()] = 0;
-		Point position = podiumPoint;
+		distance[(int) targetPosition.getX()][(int) targetPosition.getY()] = 0;
+		Point position = targetPosition;
 		toDo.add(position);
 		visited.add(position);
 
@@ -97,11 +77,4 @@ public class Pathfinding {
 		return direction;
 	}
 
-	public ArrayList<Point> getPodiumPoint() {
-		return podiums;
-	}
-
 }
-// 16,18
-// 43,24
-// 15,48

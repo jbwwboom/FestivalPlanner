@@ -9,9 +9,6 @@ import javax.swing.Timer;
 
 public class Collision extends JPanel implements ActionListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public static void main(String[] args) {

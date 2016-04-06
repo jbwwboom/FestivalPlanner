@@ -19,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -31,7 +32,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-public class Simulator {
+public class Simulator implements ActionListener {
 
 	private ArrayList<BufferedImage> images = new ArrayList<BufferedImage>();
 	private JSONObject jsonObject;
@@ -39,15 +40,17 @@ public class Simulator {
 	private ArrayList<BufferedImage> tileArray;
 	private JSONObject layer;
 	private int visitorAmount;
+	private Timer timer = new Timer(1000 * 30, this);
+	private int indexTimer;
 
 	private ArrayList<Point> spawnPoints = new ArrayList<Point>();
 	private ArrayList<Visitor> visitors = new ArrayList<Visitor>();
-	Pathfinding pathFinding;
+	ArrayList<Pathfinding> pathFinding = new ArrayList<Pathfinding>();
 
 	@SuppressWarnings("unchecked")
 
 	public Simulator(int visitorAmount) {
-
+		this.visitorAmount = visitorAmount;
 		JSONParser parser = new JSONParser();
 
 		try {
@@ -61,8 +64,6 @@ public class Simulator {
 				layer = (JSONObject) layers.get(i);
 			}
 
-			// System.out.println(layers.size());
-
 			tileArray = new ArrayList<>();
 			JSONArray jsonTilesets = (JSONArray) jsonObject.get("tilesets");
 			for (int i = 0; i < jsonTilesets.size(); i++) {
@@ -70,14 +71,11 @@ public class Simulator {
 
 				String imageFile = (String) tileset.get("image");
 				BufferedImage img = ImageIO.read(new File(imageFile));
-				/// images.add(img);
 
 				int index = ((Long) tileset.get("firstgid")).intValue();
 
 				while (tileArray.size() < 22000)
 					tileArray.add(null);
-
-				// System.out.println(img.getHeight() + " " + img.getWidth());
 
 				for (int y = 0; y < img.getHeight(); y = y + 16) {
 					for (int x = 0; x < img.getWidth(); x = x + 16) {
@@ -92,11 +90,19 @@ public class Simulator {
 			spawnPoints.add(new Point(54, 13));
 			spawnPoints.add(new Point(54, 48));
 
-			pathFinding = new Pathfinding(this);
+			pathFinding.add(new Pathfinding(this, new Point(16, 18)));
+			pathFinding.add(new Pathfinding(this, new Point(43, 24)));
+			pathFinding.add(new Pathfinding(this, new Point(15, 48)));
+			pathFinding.add(new Pathfinding(this, new Point(42, 2)));
+			pathFinding.add(new Pathfinding(this, new Point(57, 13)));
+			pathFinding.add(new Pathfinding(this, new Point(57, 48)));
+
+			timer.start();
 
 			// nieuwe bezoekers aanmaken
 			for (int i = 0; i < visitorAmount; i++) {
 				int spawn = (int) Math.floor(Math.random() * 3);
+				Pathfinding path = pathFinding.get((int) Math.floor(Math.random() * 3));
 				Point2D spawnPoint = null;
 				switch (spawn) {
 				case 0:
@@ -115,7 +121,7 @@ public class Simulator {
 				}
 
 				Point2D location = new Point2D.Double(spawnPoint.getX(), spawnPoint.getY());
-				Visitor v = new Visitor(location, this);
+				Visitor v = new Visitor(location, this, path);
 				visitors.add(v);
 			}
 
@@ -128,6 +134,17 @@ public class Simulator {
 		}
 
 	}
+
+	// public boolean isSpawnable(ArrayList<Visitor> visitors) {
+	// boolean spawnable = true;
+	//
+	// for (Visitor v : visitors) {
+	// if (v.getLocation().distance(v.getStartLocation()) < 7)
+	// spawnable = false;
+	// }
+	//
+	// return spawnable;
+	// }
 
 	public void makeGUI(int visitorAmount) {
 		JFrame frame = new JFrame("SIM");
@@ -154,6 +171,58 @@ public class Simulator {
 		return visitors;
 	}
 
+	public ArrayList<Pathfinding> getPathfinding() {
+		return pathFinding;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		indexTimer++;
+		if (indexTimer % 3 == 0 && indexTimer != 0) {
+			for (Visitor v : visitors) {
+				v.setPath(pathFinding.get((int) Math.floor(Math.random() * 3) + 3));
+			}
+			timer.restart();
+			System.out.println(visitorAmount + " " + visitors.size() + " " + indexTimer);
+		} else {
+			makeVisitors();
+			for (Visitor v : visitors) {
+				v.setPath(pathFinding.get((int) Math.floor(Math.random() * 3)));
+
+			}
+			timer.restart();
+			System.out.println(visitorAmount + " " + visitors.size() + " " + indexTimer);
+		}
+	}
+
+	private void makeVisitors() {
+		for (int i = 0; visitors.size() <= visitorAmount; i++) {
+			int spawn = (int) Math.floor(Math.random() * 3);
+			Pathfinding path = pathFinding.get((int) Math.floor(Math.random() * 3));
+			Point2D spawnPoint = null;
+			switch (spawn) {
+			case 0:
+				spawnPoint = spawnPoints.get(spawn);
+				spawnPoint = new Point((int) spawnPoint.getX() * 16, (int) spawnPoint.getY() * 16);
+				break;
+			case 1:
+				spawnPoint = spawnPoints.get(spawn);
+				spawnPoint = new Point((int) spawnPoint.getX() * 16, (int) spawnPoint.getY() * 16);
+				break;
+
+			case 2:
+				spawnPoint = spawnPoints.get(spawn);
+				spawnPoint = new Point((int) spawnPoint.getX() * 16, (int) spawnPoint.getY() * 16);
+				break;
+			}
+
+			Point2D location = new Point2D.Double(spawnPoint.getX(), spawnPoint.getY());
+			Visitor v = new Visitor(location, this, path);
+			visitors.add(v);
+		}
+
+	}
+
 }
 
 class TestPanel extends JPanel implements ActionListener {
@@ -167,6 +236,7 @@ class TestPanel extends JPanel implements ActionListener {
 	private int visitorAmount;
 	private int newCY;
 	private float cameraZoom = 1;
+	float rotation = 0;
 	Timer timer;
 	GUI gui;
 
@@ -182,7 +252,6 @@ class TestPanel extends JPanel implements ActionListener {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
-		// g2.translate(-100, -150);
 
 		AffineTransform camera = getCamera();
 		g2.setTransform(camera);
@@ -209,8 +278,16 @@ class TestPanel extends JPanel implements ActionListener {
 			v.draw(g2);
 		}
 
-		for (Visitor v : tiled.getVisitors()) {
+		Iterator<Visitor> iterator = tiled.getVisitors().iterator();
+		while (iterator.hasNext()) {// for (Visitor v : tiled.getVisitors()) {
+			Visitor v = iterator.next();
 			v.update(tiled.getVisitors());
+
+			if (v.atTarget() && (v.getPath() == tiled.getPathfinding().get(3)
+					|| v.getPath() == tiled.getPathfinding().get(4) || v.getPath() == tiled.getPathfinding().get(5))) {
+				iterator.remove();
+			}
+
 		}
 
 	}
@@ -238,19 +315,22 @@ class TestPanel extends JPanel implements ActionListener {
 
 		addMouseWheelListener(new MouseWheelListener() {
 			public void mouseWheelMoved(MouseWheelEvent me) {
+				if (me.isControlDown())
+					rotation += me.getWheelRotation() / 10.0f;
+				else {
+					try {
+						Point2D mousePD = getCamera().inverseTransform(me.getPoint(), null);
 
-				try {
-					Point2D mousePD = getCamera().inverseTransform(me.getPoint(), null);
+						cameraZoom *= 1 - me.getWheelRotation() * 0.05f;
 
-					cameraZoom *= 1 - me.getWheelRotation() * 0.05f;
+						Point2D mousePD2 = getCamera().inverseTransform(me.getPoint(), null);
 
-					Point2D mousePD2 = getCamera().inverseTransform(me.getPoint(), null);
+						newCX -= (mousePD.getX() - mousePD2.getX()) * cameraZoom;
+						newCY -= (mousePD.getY() - mousePD2.getY()) * cameraZoom;
 
-					newCX -= (mousePD.getX() - mousePD2.getX()) * cameraZoom;
-					newCY -= (mousePD.getY() - mousePD2.getY()) * cameraZoom;
-
-				} catch (NoninvertibleTransformException e) {
-					e.printStackTrace();
+					} catch (NoninvertibleTransformException e) {
+						e.printStackTrace();
+					}
 				}
 
 				repaint();
@@ -261,6 +341,8 @@ class TestPanel extends JPanel implements ActionListener {
 
 	public AffineTransform getCamera() {
 		AffineTransform camera = new AffineTransform();
+		camera.translate(getWidth() / 2, getHeight() / 2);
+		camera.rotate(rotation);
 		camera.translate(newCX, newCY);
 		camera.scale(cameraZoom, cameraZoom);
 		return camera;
